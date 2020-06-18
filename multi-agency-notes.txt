@@ -1,0 +1,41 @@
+- create <agency-id>.properties
+- createdb agency-<agency-id>
+- psql agency-<agency-id>
+  + \i /Users/wildcard/projects/transitime/transitclock/src/main/resources/ddl_postgres_org_transitime_db_structs.sql
+  + \i /Users/wildcard/projects/transitime/transitclock/src/main/resources/ddl_postgres_org_transitime_db_webstructs.sql
+- java \
+    -Dtransitclock.logging.dir=logs \
+    -cp transitclock/target/Core.jar org.transitclock.applications.GtfsFileProcessor \
+    -c "<agency-id>.properties" \
+    -storeNewRevs \
+    -skipDeleteRevs \
+    -gtfsUrl <static-gtfs-url> \
+    -maxTravelTimeSegmentLength 100
+- java \
+  -cp transitclock/target/Core.jar org.transitclock.applications.CreateAPIKey \
+  -c "<agency-id>.properties" \
+  -n "Buzz Killington" \
+  -u "https://www.google.com" \
+  -e "info@example.com" \
+  -p "4155550123" \
+  -d "Core access application"
+- java \
+  -Dhibernate.connection.url=jdbc:postgresql://127.0.0.1:5432/agency-halifax \
+  -Dhibernate.connection.username=wildcard \
+  -Dhibernate.connection.password= \
+  -Dtransitclock.hibernate.configFile=hibernate.cfg.xml \
+  -cp transitclock/target/Core.jar org.transitclock.db.webstructs.WebAgency \
+  <agency-id> \
+  127.0.0.1 \
+  agency-<agency-id> \
+  postgresql \
+  0.0.0.0 \
+  wildcard \
+  ""
+
+java -Dtransitclock.configFiles=monterey.properties -Dtransitclock.logging.dir=logs -Dtransitclock.rmi.secondaryRmiPort=0 -jar transitclock/target/Core.jar
+java -Dtransitclock.configFiles=monterey.properties -Dtransitclock.logging.dir=logs -Dtransitclock.rmi.secondaryRmiPort=0 -jar transitclock/target/Core.jar
+java -Dtransitclock.configFiles=riverside.properties -Dtransitclock.logging.dir=logs -Dtransitclock.rmi.secondaryRmiPort=0 -jar transitclock/target/Core.jar
+
+./setup-agency.sh monterey http://www.mst.org/google/google_transit.zip http://206.128.158.191/TMGTFSRealTimeWebService/Vehicle/VehiclePositions.pb
+./setup-agency.sh riverside http://www.riversidetransit.com/google_transit.zip https://rtabus.com/gtfsrt/vehicles
