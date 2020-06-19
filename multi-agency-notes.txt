@@ -1,41 +1,39 @@
-- create <agency-id>.properties
-- createdb agency-<agency-id>
-- psql agency-<agency-id>
-  + \i /Users/wildcard/projects/transitime/transitclock/src/main/resources/ddl_postgres_org_transitime_db_structs.sql
-  + \i /Users/wildcard/projects/transitime/transitclock/src/main/resources/ddl_postgres_org_transitime_db_webstructs.sql
-- java \
-    -Dtransitclock.logging.dir=logs \
-    -cp transitclock/target/Core.jar org.transitclock.applications.GtfsFileProcessor \
-    -c "<agency-id>.properties" \
-    -storeNewRevs \
-    -skipDeleteRevs \
-    -gtfsUrl <static-gtfs-url> \
-    -maxTravelTimeSegmentLength 100
-- java \
-  -cp transitclock/target/Core.jar org.transitclock.applications.CreateAPIKey \
-  -c "<agency-id>.properties" \
-  -n "Buzz Killington" \
-  -u "https://www.google.com" \
-  -e "info@example.com" \
-  -p "4155550123" \
-  -d "Core access application"
-- java \
-  -Dhibernate.connection.url=jdbc:postgresql://127.0.0.1:5432/agency-halifax \
-  -Dhibernate.connection.username=wildcard \
-  -Dhibernate.connection.password= \
-  -Dtransitclock.hibernate.configFile=hibernate.cfg.xml \
-  -cp transitclock/target/Core.jar org.transitclock.db.webstructs.WebAgency \
-  <agency-id> \
-  127.0.0.1 \
-  agency-<agency-id> \
-  postgresql \
-  0.0.0.0 \
-  wildcard \
-  ""
+This document describes how to build, configure and run the transit clock locally for multiple agencies.
 
-java -Dtransitclock.configFiles=monterey.properties -Dtransitclock.logging.dir=logs -Dtransitclock.rmi.secondaryRmiPort=0 -jar transitclock/target/Core.jar
-java -Dtransitclock.configFiles=monterey.properties -Dtransitclock.logging.dir=logs -Dtransitclock.rmi.secondaryRmiPort=0 -jar transitclock/target/Core.jar
-java -Dtransitclock.configFiles=riverside.properties -Dtransitclock.logging.dir=logs -Dtransitclock.rmi.secondaryRmiPort=0 -jar transitclock/target/Core.jar
+1) from $TRANSIT_CLOCK_ROOT, run mvn install -DskipTests. This fork of the project has a pom.xml fix that allows building with more recent java versions.
 
-./setup-agency.sh monterey http://www.mst.org/google/google_transit.zip http://206.128.158.191/TMGTFSRealTimeWebService/Vehicle/VehiclePositions.pb
-./setup-agency.sh riverside http://www.riversidetransit.com/google_transit.zip https://rtabus.com/gtfsrt/vehicles
+2) The system requires a database to run: postgres, mysql and oracle are supported. I had trouble getting the DB portion to work for a few reasons in the beginning. The transit clock docker repo mentions postgres version 9.6.3. That version was not available through homebrew (I am on macOS), so I built from source and installed.
+
+3) for each agency to handle:
+   - pick an id, such as 'monterey'
+   - find static gtfs feed
+   - find vehicle position update feed
+   - run setup-agency.sh with the above arguments
+
+   for now, the assumption is that the script will be run from $TRANSIT_CLOCK_ROOT
+
+4) start a transit clock core for each agency:
+
+  java \
+    -Dtransitclock.configFiles=<agency-id>.properties \
+    -Dtransitclock.logging.dir=logs-<agency-id> \
+    -Dtransitclock.rmi.secondaryRmiPort=0 -jar \
+    transitclock/target/Core.jar
+
+5) start rmi registry: rmiregistry &
+
+6) set some env variables needed by the server:
+   - get API key:
+     + connect to primary agency db, e.g. 'psql agency-monterey'
+     + run 'select * from apikeys;' and observer api key
+   - export JAVA_OPTS="-Dtransitclock.apikey=<api-key> \
+     -Dtransitclock.configFiles=<primary-agency-id>.properties \
+     -Dtransitclock.hibernate.configFile=hibernate.cfg.xml"
+
+7) run server:
+   - install apache tomcat if not already present (tested with 8.5.56)
+   - copy transitclockWebapp/target/web.war to $TOMCAT_HOME/webapp
+   - copy transitclockApi/target/api.war to $TOMCAT_HOME/webapp
+   - run server with $TOMCAT_HOMEbin/startup.sh
+
+8) check that transit clock is running by pointing browser to localhost:8080/web (assuming vanilla tomcat setup). Pick an agency from the list presented on the start page, then choose Map->Map Including Unassigned Vehicles.  You should see a live map of vehicles that updates a few times a minute. Select a route from the dropdown to see routes with stops. Clicking on a stop will show arrival predictions or a message saying that no prediction is available. Note that the system usually takes a while to warm up

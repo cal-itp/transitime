@@ -1,5 +1,12 @@
 #! /bin/sh
 
+# setup-agency: this script does the database setup required for a public transit agency.
+# Three arguments are required:
+# - agency-id: a name for the agency, e.g. 'monterey' or 'riverside'
+# - gtfs-url: static gtfs feed for the agency, e.g. http://www.mst.org/google/google_transit.zip
+# - vehicle-positions-url: gtfs-rt feed for vehicle position updates, e.g. http://206.128.158.191/TMGTFSRealTimeWebService/Vehicle/VehiclePositions.pb
+# IMPORTANT: any previously existing setup for an agency with the same ID will be clobbered
+
 if [ "$#" -ne 3 ]; then
   echo "Usage: setup-agency <agency-id> <gtfs-url> <vehicle-positions-url>" >&2
   exit 1
@@ -37,8 +44,8 @@ echo transitclock.rmi.secondaryRmiPort=0 >> $PROPFILE
 dropdb $DBNAME
 createdb $DBNAME || exit 0
 
-psql -d $DBNAME -f /Users/wildcard/projects/transitime/transitclock/src/main/resources/ddl_postgres_org_transitime_db_structs.sql || exit 0
-psql -d $DBNAME -f /Users/wildcard/projects/transitime/transitclock/src/main/resources/ddl_postgres_org_transitime_db_webstructs.sql || exit 0
+psql -d $DBNAME -f transitclock/src/main/resources/ddl_postgres_org_transitime_db_structs.sql || exit 0
+psql -d $DBNAME -f transitclock/src/main/resources/ddl_postgres_org_transitime_db_webstructs.sql || exit 0
 
 psql -P pager=off -q -d $DBNAME --command=\\dt
 
