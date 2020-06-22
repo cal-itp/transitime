@@ -1,7 +1,7 @@
 /**
- * 
+ *
  * This file is part of Transitime.org
- * 
+ *
  * Transitime.org is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPL) as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -17,12 +17,13 @@
  */
 package org.transitclock.gtfs.gtfsStructs;
 
+import java.util.Objects;
 import org.apache.commons.csv.CSVRecord;
 import org.transitclock.utils.csv.CsvBase;
 
 /**
  * A GTFS fare_rules object.
- * 
+ *
  * @author SkiBu Smith
  *
  */
@@ -52,7 +53,7 @@ public class GtfsFareRule extends CsvBase {
 		destinationId = getOptionalValue(record, "destination_id");
 		containsId = getOptionalValue(record, "contains_id");
 	}
-	
+
 	public String getFareId() {
 		return fareId;
 	}
@@ -84,6 +85,10 @@ public class GtfsFareRule extends CsvBase {
 						+ ", " : "")
 				+ (containsId != null ? "_containsId=" + containsId : "")
 				+ "]";
+	}
+
+	public int hashCode() {
+		return Objects.hash(fareId, routeId, originId, destinationId, containsId);
 	}
 
 	/**

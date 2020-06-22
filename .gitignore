@@ -11,5 +11,5 @@
 /bin/
 /.settings/
 .DS_Store
-logs/
+logs*/
 

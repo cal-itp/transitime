@@ -67,6 +67,10 @@ java \
   -p "4155550123" \
   -d "Core access application" || exit 0
 
+CMD="psql -q -d agency-halifax --command=\"delete from webagencies where agencyid='"
+CMD+="$AGENCY_ID';\""
+eval $CMD
+
 java \
   -Dhibernate.connection.url=jdbc:postgresql://127.0.0.1:5432/agency-halifax \
   -Dhibernate.connection.username=wildcard \
