@@ -1,0 +1,5 @@
+Core.jar
+ddl_postgres_org_transitime_db_structs.sql
+ddl_postgres_org_transitime_db_webstructs.sql
+hibernate.cfg.xml
+

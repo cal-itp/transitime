@@ -67,17 +67,17 @@ public class TripDataHistoryCache implements TripDataHistoryCacheInterface{
 
 	static {
 		logger = LoggerFactory.getLogger(TripDataHistoryCache.class);
-		//logger.info("TripDataHistoryCache.clinit()");
+		logger.info("TripDataHistoryCache.clinit()");
 
 		singleton = new TripDataHistoryCache();
-		//logger.info("- singleton: {}", singleton);
+		logger.info("- singleton: {}", singleton);
 
 		tripDataCacheMaxAgeSec = new IntegerConfigValue(
 			"transitclock.tripdatacache.tripDataCacheMaxAgeSec",
 			15 * Time.SEC_PER_DAY,
 			"How old an arrivaldeparture has to be before it is removed from the cache "
 		);
-		//logger.info("- tripDataCacheMaxAgeSec: {}", tripDataCacheMaxAgeSec);
+		logger.info("- tripDataCacheMaxAgeSec: {}", tripDataCacheMaxAgeSec);
 	}
 
 	final URL xmlConfigUrl = getClass().getResource("/ehcache.xml");
@@ -96,10 +96,10 @@ public class TripDataHistoryCache implements TripDataHistoryCacheInterface{
 	public TripDataHistoryCache() {
 		logger.info("TripDataHistoryCache.TripDataHistoryCache()");
 		CacheManager cm = CacheManagerFactory.getInstance();
-		//logger.info("- cm: {}", cm);
+		logger.info("- cm: {}", cm);
 
 		cache = cm.getCache(cacheByTrip, TripKey.class, TripEvents.class);
-		//logger.info("- cache: {}", cache);
+		logger.info("- cache: {}", cache);
 	}
 
 

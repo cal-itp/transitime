@@ -14,12 +14,12 @@ public class CacheManagerFactory {
 	public static CacheManager singleton = null;
 
 	public static CacheManager getInstance() {
-		//logger.info("CacheManagerFactory.getInstance()");
-		//logger.info("- singleton: {}", singleton);
+		logger.info("CacheManagerFactory.getInstance()");
+		logger.info("- singleton: {}", singleton);
 
 		if (singleton == null) {
 			URL xmlConfigUrl = CacheManagerFactory.class.getClassLoader().getResource("ehcache.xml");
-			//logger.info("- xmlConfigUrl: {}", xmlConfigUrl);
+			logger.info("- xmlConfigUrl: {}", xmlConfigUrl);
 			XmlConfiguration xmlConfig = null;
 			try {
 				xmlConfig = new XmlConfiguration(xmlConfigUrl);
@@ -27,12 +27,12 @@ public class CacheManagerFactory {
 				logger.error("xmlConfig creation failed: " + e);
 				e.printStackTrace();
 			}
-			//logger.info("- xmlConfig: {}", xmlConfig);
+			logger.info("- xmlConfig: {}", xmlConfig);
 
 			singleton = CacheManagerBuilder.newCacheManager(xmlConfig);
-			//logger.info("- singleton: {}", singleton);
+			logger.info("- singleton: {}", singleton);
 			singleton.init();
-			//logger.info("+ singleton initialized");
+			logger.info("+ singleton initialized");
 		}
 
 		return singleton;
