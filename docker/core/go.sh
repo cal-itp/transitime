@@ -32,11 +32,7 @@ do
   GTFS_URL=`echo $i|cut -d ' ' -f2`
   GTFSRTVEHICLEPOSITIONS=`echo $i|cut -d ' ' -f3`
 
-  # build custom image for agency
-  # docker build --no-cache -t transitclock-core-$AGENCYID --build-arg AGENCYID=$AGENCYID --build-arg GTFS_URL=$GTFS_URL --build-arg GTFSRTVEHICLEPOSITIONS=$GTFSRTVEHICLEPOSITIONS .
   docker build --no-cache -t transitclock-core-$AGENCYID .
-
-  # docker run --name transitclock-core-instance-$AGENCYID --rm --link transitclock-db:postgres -e PGPASSWORD=$PGPASSWORD  -v ~/logs:/usr/local/transitclock/logs/ -v ~/ehcache:/usr/local/transitclock/cache/ transitclock-core-$AGENCYID setup-agency.sh $AGENCYID $GTFS_URL $GTFSRTVEHICLEPOSITIONS
 
   docker run --name transitclock-core-instance-$AGENCYID --rm --link transitclock-db:postgres -e PGPASSWORD=$PGPASSWORD  -v ~/logs:/usr/local/transitclock/logs/ -v ~/ehcache:/usr/local/transitclock/cache/ transitclock-core-$AGENCYID start-core.sh $AGENCYID $GTFS_URL $GTFSRTVEHICLEPOSITIONS /usr/local/transitclock/config/transitclock.properties
 done
