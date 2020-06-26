@@ -1,12 +1,12 @@
 FROM openjdk:10
 
-ARG AGENCYID
-ARG GTFS_URL
-ARG GTFSRTVEHICLEPOSITIONS
+# ARG AGENCYID
+# ARG GTFS_URL
+# ARG GTFSRTVEHICLEPOSITIONS
 
-ENV AGENCYID ${AGENCYID}
-ENV GTFS_URL ${GTFS_URL}
-ENV GTFSRTVEHICLEPOSITIONS ${GTFSRTVEHICLEPOSITIONS}
+# ENV AGENCYID ${AGENCYID}
+# ENV GTFS_URL ${GTFS_URL}
+# ENV GTFSRTVEHICLEPOSITIONS ${GTFSRTVEHICLEPOSITIONS}
 
 RUN apt-get update \
 	&& apt-get install -y postgresql-client \
@@ -38,5 +38,5 @@ ENV PATH="/usr/local/transitclock/bin:${PATH}"
 
 COPY hibernate.cfg.xml /usr/local/transitclock/config/hibernate.cfg.xml
 
-CMD ["/usr/local/transitclock/bin/setup-agency.sh", "${AGENCYID}", "${GTFS_URL}", "${GTFSRTVEHICLEPOSITIONS}", "/usr/local/transitclock/config/transitclock.properties"]
+# CMD ["/usr/local/transitclock/bin/setup-agency.sh", "${AGENCYID}", "${GTFS_URL}", "${GTFSRTVEHICLEPOSITIONS}", "/usr/local/transitclock/config/transitclock.properties"]
 
