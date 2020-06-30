@@ -1,5 +1,19 @@
 export PGPASSWORD=transitclock
 
+PERFORM_BUILD=1
+
+for i in "$@"; do
+  if [ "$i" == "-skip-build" ]; then
+    PERFORM_BUILD=0
+    shift
+  fi
+done
+
+if [ "$#" -ne 1 ]; then
+  echo "Usage: go.sh <rmi-hostname>" >&2
+  exit 1
+fi
+
 SAVED_IFS=$IFS
 IFS=$'\n'
 
@@ -32,7 +46,11 @@ do
   GTFS_URL=`echo $i|cut -d ' ' -f2`
   GTFSRTVEHICLEPOSITIONS=`echo $i|cut -d ' ' -f3`
 
-  docker build --no-cache -t transitclock-core-$AGENCYID .
+  if [ $PERFORM_BUILD == "1" ]; then
+    docker build --no-cache -t transitclock-core-$AGENCYID .
+  else
+    echo skipping build...
+  fi
 
-  docker run --name transitclock-core-instance-$AGENCYID --rm --link transitclock-db:postgres -e PGPASSWORD=$PGPASSWORD  -v ~/logs:/usr/local/transitclock/logs/ -v ~/ehcache:/usr/local/transitclock/cache/ transitclock-core-$AGENCYID start-core.sh $AGENCYID $GTFS_URL $GTFSRTVEHICLEPOSITIONS /usr/local/transitclock/config/transitclock.properties
+  docker run --name transitclock-core-instance-$AGENCYID --rm --link transitclock-db:postgres -e PGPASSWORD=$PGPASSWORD  -v ~/logs:/usr/local/transitclock/logs/ -v ~/ehcache:/usr/local/transitclock/cache/ transitclock-core-$AGENCYID start-core.sh $AGENCYID $GTFS_URL $GTFSRTVEHICLEPOSITIONS /usr/local/transitclock/config/transitclock.properties $1
 done

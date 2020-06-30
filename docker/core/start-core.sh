@@ -7,6 +7,7 @@ echo 'starting core...'
 java \
   -Dtransitclock.configFiles=/usr/local/transitclock/config/transitclock.properties \
   -Dtransitclock.logging.dir=/usr/local/transitclock/logs \
+  -Dtransitclock.rmi.rmiHost=$5 \
   -Dtransitclock.rmi.secondaryRmiPort=0 \
   -jar /usr/local/transitclock/lib/Core.jar
 
