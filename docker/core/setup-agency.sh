@@ -61,7 +61,7 @@ java \
   -p "4155550123" \
   -d "Core access application" || exit 0
 
-CMD="psql -q -d agency-halifax --command=\"delete from webagencies where agencyid='"
+CMD="psql -h $DB_HOSTNAME -p $DB_PORT -U postgres -q -d agency-halifax --command=\"delete from webagencies where agencyid='"
 CMD="$CMD$AGENCY_ID';\""
 eval $CMD
 
