@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
-setup-agency.sh $1 $2 $3 $4
+if [ "$4" == "1" ]; then
+  setup-agency.sh $1 $2 $3 $6 $7 $8 $9 ${10}
+else
+  create-prop-file.sh $1 $2 $3 $6 $7
+fi
 
 echo 'starting core...'
 

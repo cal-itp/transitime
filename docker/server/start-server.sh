@@ -5,7 +5,7 @@ find /usr/local/transitclock/config/ -type f -exec sed -i s#"POSTGRES_PORT_5432_
 find /usr/local/transitclock/config/ -type f -exec sed -i s#"PGPASSWORD"#"$PGPASSWORD"#g {} \;
 find /usr/local/transitclock/config/ -type f -exec sed -i s#"AGENCYNAME"#"$AGENCYNAME"#g {} \;
 
-rmiregistry &
+### FIXME create-prop-file.sh with args
 
 echo 'starting server...'
 

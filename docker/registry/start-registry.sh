@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-echo -n'starting RMI registry...'
+echo -n 'starting RMI registry...'
 
 rmiregistry &
 
