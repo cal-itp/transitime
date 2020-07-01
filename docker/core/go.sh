@@ -69,7 +69,7 @@ do
   DB_HOSTNAME=`docker inspect transitclock-db-$AGENCYID | grep -i ipaddress | tail -1 | cut -d '"' -f4`
   echo DB_HOSTNAME: $DB_HOSTNAME
 
-  docker run --name transitclock-core-instance-$AGENCYID --rm -e PGPASSWORD=$PGPASSWORD  -v ~/logs:/usr/local/transitclock/logs/ -v ~/ehcache:/usr/local/transitclock/cache/ transitclock-core-$AGENCYID start-core.sh $AGENCYID $GTFS_URL $GTFSRTVEHICLEPOSITIONS $PERFORM_BUILD $1 $DB_HOSTNAME 5432 $PRIMARY_AGENCY_HOST 5432 $PRIMARY_AGENCY_ID
+  docker run --name transitclock-core-instance-$AGENCYID --rm -e PGPASSWORD=$PGPASSWORD transitclock-core-$AGENCYID start-core.sh $AGENCYID $GTFS_URL $GTFSRTVEHICLEPOSITIONS $PERFORM_BUILD $1 $DB_HOSTNAME 5432 $PRIMARY_AGENCY_HOST 5432 $PRIMARY_AGENCY_ID
 
   MAPPED_PORT=`expr $MAPPED_PORT + 1`
 done
