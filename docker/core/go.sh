@@ -9,26 +9,43 @@ for i in "$@"; do
   fi
 done
 
-if [ "$#" -ne 1 ]; then
-  echo "Usage: go.sh <rmi-hostname>" >&2
+if [ "$#" -ne 2 ]; then
+  echo "Usage: go.sh <agency-id> <rmi-hostname>" >&2
   exit 1
 fi
 
+AGENCY_ID=$1
+RMI_HOSTNAME=$2
+
+LINE=`grep "^$AGENCY_ID " agency-list.txt`
+
+if [ -z "$LINE" ]; then
+  echo cannot find agency ID $AGENCY_ID in agency-list.txt
+  exit 1
+fi
+
+GTFS_URL=`echo $LINE | cut -d ' ' -f2`
+echo GTFS_URL: $GTFS_URL
+
+VEHICLE_POSITIONS_URL=`echo $LINE | cut -d ' ' -f3`
+echo VEHICLE_POSITIONS_URL: $VEHICLE_POSITIONS_URL
 SAVED_IFS=$IFS
 IFS=$'\n'
 
-for i in `docker ps | grep -v ^CONTAINER | grep transitclock-core- | cut -d ' ' -f1`
-do
-  docker stop $i
-  docker rm $i
-done
+ID=`docker ps | grep -v ^CONTAINER | grep transitclock-core-$AGENCY_ID | cut -d ' ' -f1`
+
+if [ ! -z "$ID"]; then
+  docker stop $ID
+  docker rm $ID
+fi
 
 if [ "$PERFORM_BUILD" == "1" ]; then
-  for i in `docker ps | grep -v ^CONTAINER | grep transitclock-db- | cut -d ' ' -f1`
-  do
-    docker stop $i
-    docker rm $i
-  done
+  ID=`docker ps | grep -v ^CONTAINER | grep transitclock-db-$AGENCY_ID | cut -d ' ' -f1`
+
+  if [ ! -z "$ID"]; then
+    docker stop $ID
+    docker rm $ID
+  fi
 fi
 
 IFS=$SAVED_IFS
@@ -43,33 +60,25 @@ fi
 SAVED_IFS=$IFS
 IFS=$'\n'
 
+if [ "$PERFORM_BUILD" == "1" ]; then
+  docker build --no-cache -t transitclock-core .
+fi
+
 PRIMARY_AGENCY_HOST="172.17.0.3"
-PRIMARY_AGENCY_ID=halifax
-FIRST_PORT=5433
-MAPPED_PORT=$FIRST_PORT
+PRIMARY_AGENCY_ID=`head -1 agency-list.txt | cut -d ' ' -f1`
 
-for i in `cat agency-list.txt`
-do
-  AGENCYID=`echo $i|cut -d ' ' -f1`
-  GTFS_URL=`echo $i|cut -d ' ' -f2`
-  GTFSRTVEHICLEPOSITIONS=`echo $i|cut -d ' ' -f3`
+if [ "$PERFORM_BUILD" == "1" ]; then
+  docker run --name transitclock-db-$AGENCY_ID --rm -e POSTGRES_PASSWORD=$PGPASSWORD -d postgres:9.6.3
 
-  if [ "$PERFORM_BUILD" == "1" ]; then
-    docker build --no-cache -t transitclock-core-$AGENCYID .
+  echo sleeping for a few...
+  sleep 5
+else
+  echo skipping build...
+fi
 
-    echo MAPPED_PORT: $MAPPED_PORT
-    docker run --name transitclock-db-$AGENCYID --rm -p $MAPPED_PORT:5432 -e POSTGRES_PASSWORD=$PGPASSWORD -d postgres:9.6.3
+DB_HOSTNAME=`docker inspect transitclock-db-$AGENCY_ID | grep -i ipaddress | tail -1 | cut -d '"' -f4`
+echo DB_HOSTNAME: $DB_HOSTNAME
 
-    echo sleeping for a few...
-    sleep 5
-  else
-    echo skipping build...
-  fi
-
-  DB_HOSTNAME=`docker inspect transitclock-db-$AGENCYID | grep -i ipaddress | tail -1 | cut -d '"' -f4`
-  echo DB_HOSTNAME: $DB_HOSTNAME
-
-  docker run --name transitclock-core-instance-$AGENCYID --rm -e PGPASSWORD=$PGPASSWORD transitclock-core-$AGENCYID start-core.sh $AGENCYID $GTFS_URL $GTFSRTVEHICLEPOSITIONS $PERFORM_BUILD $1 $DB_HOSTNAME 5432 $PRIMARY_AGENCY_HOST 5432 $PRIMARY_AGENCY_ID
-
-  MAPPED_PORT=`expr $MAPPED_PORT + 1`
-done
+docker run --name transitclock-core-$AGENCY_ID --rm -e PGPASSWORD=$PGPASSWORD transitclock-core start-core.sh \
+  $AGENCY_ID $GTFS_URL $VEHICLE_POSITIONS_URL $PERFORM_BUILD $RMI_HOSTNAME $DB_HOSTNAME \
+  5432 $PRIMARY_AGENCY_HOST 5432 $PRIMARY_AGENCY_ID

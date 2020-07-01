@@ -10,7 +10,7 @@ done
 
 echo KILL_DB_INSTANCES: $KILL_DB_INSTANCES
 
-for i in `docker ps | grep transitclock-core-instance- | cut -d ' ' -f1`
+for i in `docker ps | grep transitclock-core- | cut -d ' ' -f1`
 do
   docker stop $i
 done
