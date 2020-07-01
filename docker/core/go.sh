@@ -56,17 +56,18 @@ do
 
   if [ "$PERFORM_BUILD" == "1" ]; then
     docker build --no-cache -t transitclock-core-$AGENCYID .
-    docker run --name transitclock-db-$AGENCYID --rm -p $MAPPED_PORT:5432 -e POSTGRES_PASSWORD=$PGPASSWORD -d postgres:9.6.3
 
     echo MAPPED_PORT: $MAPPED_PORT
-    DB_HOSTNAME=`docker inspect transitclock-db-$AGENCYID | grep -i ipaddress | tail -1 | cut -d '"' -f4`
-    echo DB_HOSTNAME: $DB_HOSTNAME
+    docker run --name transitclock-db-$AGENCYID --rm -p $MAPPED_PORT:5432 -e POSTGRES_PASSWORD=$PGPASSWORD -d postgres:9.6.3
 
     echo sleeping for a few...
     sleep 5
   else
     echo skipping build...
   fi
+
+  DB_HOSTNAME=`docker inspect transitclock-db-$AGENCYID | grep -i ipaddress | tail -1 | cut -d '"' -f4`
+  echo DB_HOSTNAME: $DB_HOSTNAME
 
   docker run --name transitclock-core-instance-$AGENCYID --rm -e PGPASSWORD=$PGPASSWORD  -v ~/logs:/usr/local/transitclock/logs/ -v ~/ehcache:/usr/local/transitclock/cache/ transitclock-core-$AGENCYID start-core.sh $AGENCYID $GTFS_URL $GTFSRTVEHICLEPOSITIONS $PERFORM_BUILD $1 $DB_HOSTNAME 5432 $PRIMARY_AGENCY_HOST 5432 $PRIMARY_AGENCY_ID
 
