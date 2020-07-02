@@ -1,16 +1,16 @@
 /*
  * This file is part of Transitime.org
- * 
+ *
  * Transitime.org is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License (GPL) as published by the
  * Free Software Foundation, either version 3 of the License, or any later
  * version.
- * 
+ *
  * Transitime.org is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * Transitime.org . If not, see <http://www.gnu.org/licenses/>.
  */
@@ -39,7 +39,7 @@ import org.transitclock.utils.Time;
  * For clients to access RMI based method calls for a remote object simply need
  * to call something like: Hello hello = ClientFactory.getInstance(agencyId,
  * Hello.class);
- * 
+ *
  * @author SkiBu Smith
  *
  */
@@ -55,10 +55,10 @@ public class ClientFactory<T extends Remote> {
 					+ "so total timeout time is twice what is specified here.");
 
 	private static StringConfigValue debugRmiServerHost = new StringConfigValue(
-	    "transtime.rmi.debug.rmi.server", 
-	    null, 
+	    "transtime.rmi.debug.rmi.server",
+	    null,
 	    "The RMI server to connect to when in debug mode");
-	
+
 	private static final Logger logger = LoggerFactory
 			.getLogger(ClientFactory.class);
 
@@ -70,7 +70,7 @@ public class ClientFactory<T extends Remote> {
 	 * reasonable because usually will only be creating a single such object and
 	 * if there are a few that is fine as well since they are not that
 	 * expensive.
-	 * 
+	 *
 	 * @param host
 	 *            Where remote object lives
 	 * @param agencyId
@@ -93,13 +93,13 @@ public class ClientFactory<T extends Remote> {
 			// an error.
 			RmiStubInfo info = new RmiStubInfo(agencyId, clazz.getSimpleName());
 
-			// Get the RMI stub. Don't update host name since there is no 
+			// Get the RMI stub. Don't update host name since there is no
 			// indication of a problem with the cached version. Instead,
 			// just use the cached version to reduce db access.
 			boolean updateHostName = true;
 			T rmiStub = getRmiStub(info, updateHostName);
 
-			logger.debug("Getting proxy instance...");
+			logger.info("Getting proxy instance...");
 
 			// Create proxy for the RMI stub so that the special
 			// RmiCallInvocationHandler can be used to instrument
@@ -110,13 +110,13 @@ public class ClientFactory<T extends Remote> {
 							new Class<?>[] { clazz },
 							new RmiCallInvocationHandler(rmiStub, info));
 
-			logger.debug("Got proxy instance. proxiedStub={}", proxiedStub);
+			logger.info("Got proxy instance. proxiedStub={}", proxiedStub);
 
 			// Return the object that the client can use
 			return (T) proxiedStub;
 		} catch (Exception e) {
 			logger.error("Exception occurred when creating the RMI client "
-					+ "object for class={} and agencyId={}. {}", 
+					+ "object for class={} and agencyId={}. {}",
 					clazz.getName(), agencyId, e.getMessage());
 			return null;
 		}
@@ -125,7 +125,7 @@ public class ClientFactory<T extends Remote> {
 	/**
 	 * Creates an RMI stub based on the project name, host name, and class name.
 	 * An RMI stub is a remote reference to an object.
-	 * 
+	 *
 	 * @param info
 	 *            Species the agency ID and the host name
 	 * @param updateHostName
@@ -142,15 +142,15 @@ public class ClientFactory<T extends Remote> {
 	public static <T extends Remote> T getRmiStub(RmiStubInfo info,
 			boolean updateHostName) throws RemoteException, NotBoundException {
 		// Determine the hostname depending on if should update cache or not
-		String hostName = updateHostName ? 
+		String hostName = updateHostName ?
 				info.getHostNameViaUpdatedCache() : info.getHostName();
-		
+
 	    if (debugRmiServerHost.getValue() != null) {
 	      logger.info("using debug RMI server value of {}", debugRmiServerHost.getValue());
 	      hostName = debugRmiServerHost.getValue();
 	    }
 
-		logger.debug("Getting RMI registry for hostname={} port={} ...",
+		logger.info("Getting RMI registry for hostname={} port={} ...",
 		    hostName, RmiParams.getRmiPort());
 		// Get the registry
 		Registry registry =
@@ -161,14 +161,14 @@ public class ClientFactory<T extends Remote> {
 				AbstractServer.getBindName(info.getAgencyId(),
 						info.getClassName());
 
-		logger.debug("Got RMI registry. Getting RMI stub from registry for "
+		logger.info("Got RMI registry. Getting RMI stub from registry for "
 				+ "bindName={} ...", bindName);
 
 		// Get the RMI stub object from the registry
 		@SuppressWarnings("unchecked")
 		T rmiStub = (T) registry.lookup(bindName);
 
-		logger.debug("Got RMI stub from registry for bindName={}", bindName);
+		logger.info("Got RMI stub from registry for bindName={}", bindName);
 
 		return rmiStub;
 	}
@@ -181,7 +181,7 @@ public class ClientFactory<T extends Remote> {
 		synchronized (rmiTimeoutEnabled) {
 
 			// If already enabled for process then don't need to enable it again
-			if (rmiTimeoutEnabled)
+			if (rmiTimeoutEnabled || RMISocketFactory.getSocketFactory() != null)
 				return;
 
 			try {
@@ -225,7 +225,7 @@ public class ClientFactory<T extends Remote> {
 
 	/**
 	 * Returns the timeout time. Useful for error messages.
-	 * 
+	 *
 	 * @return Timeout time in seconds
 	 */
 	public static int getTimeoutSec() {
@@ -234,7 +234,7 @@ public class ClientFactory<T extends Remote> {
 
 	/**
 	 * Just for debugging.
-	 * 
+	 *
 	 * @param args
 	 */
 	public static void main(String args[]) {

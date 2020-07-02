@@ -1,10 +1,15 @@
 export PGPASSWORD=transitclock
 
 PERFORM_BUILD=1
+PRESERVE_DB=1
 
 for i in "$@"; do
   if [ "$i" == "-skip-build" ]; then
     PERFORM_BUILD=0
+    shift
+  fi
+  if [ "$i" == "-kill-db" ]; then
+    PRESERVE_DB=0
     shift
   fi
 done
@@ -40,10 +45,10 @@ if [ ! -z "$ID"]; then
   docker rm $ID
 fi
 
-if [ "$PERFORM_BUILD" == "1" ]; then
+if [ "$PRESERVE_DB" == "0" ]; then
   ID=`docker ps | grep -v ^CONTAINER | grep transitclock-db-$AGENCY_ID | cut -d ' ' -f1`
 
-  if [ ! -z "$ID"]; then
+  if [ ! -z "$ID" ]; then
     docker stop $ID
     docker rm $ID
   fi
@@ -70,7 +75,7 @@ fi
 PRIMARY_AGENCY_HOST="172.17.0.3"
 PRIMARY_AGENCY_ID=`head -1 agency-list.txt | cut -d ' ' -f1`
 
-if [ "$PERFORM_BUILD" == "1" ]; then
+if [ "$PRESERVE_DB" == "0" ]; then
   docker run --name transitclock-db-$AGENCY_ID --rm -e POSTGRES_PASSWORD=$PGPASSWORD -d postgres:9.6.3
 
   echo sleeping for a few...
@@ -83,5 +88,5 @@ DB_HOSTNAME=`docker inspect transitclock-db-$AGENCY_ID | grep -i ipaddress | tai
 echo DB_HOSTNAME: $DB_HOSTNAME
 
 docker run --name transitclock-core-$AGENCY_ID --rm -e PGPASSWORD=$PGPASSWORD transitclock-core start-core.sh \
-  $AGENCY_ID $GTFS_URL $VEHICLE_POSITIONS_URL $PERFORM_BUILD $RMI_HOSTNAME $DB_HOSTNAME \
+  $AGENCY_ID $GTFS_URL $VEHICLE_POSITIONS_URL $PRESERVE_DB $RMI_HOSTNAME $DB_HOSTNAME \
   5432 $PRIMARY_AGENCY_HOST 5432 $PRIMARY_AGENCY_ID

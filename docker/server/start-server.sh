@@ -16,7 +16,9 @@ create-prop-file.sh $AGENCY_ID $GTFS_URL $VEHICLE_POSITIONS_URL $DB_HOSTNAME 543
 
 echo 'starting server...'
 
-export JAVA_OPTS="-Dtransitclock.apikey=bfd3d506 -Dtransitclock.rmi.rmiHost=$RMI_HOSTNAME -Dtransitclock.configFiles=/usr/local/transitclock/config/transitclock.properties"
+export JAVA_OPTS="-Dtransitclock.apikey=bfd3d506 \
+  -Dtransitclock.logging.dir=/usr/local/transitclock/logs \
+  -Dtransitclock.configFiles=/usr/local/transitclock/config/transitclock.properties"
 
 echo JAVA_OPTS $JAVA_OPTS
 

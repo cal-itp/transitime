@@ -1,6 +1,6 @@
 /*
  * This file is part of Transitime.org
- * 
+ *
  * Transitime.org is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPL) as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -51,46 +51,46 @@ import org.transitclock.utils.Timer;
  * <p>
  * If another agency is already using the secondary RMI port on the server then
  * will get an exception and e-mail notification is sent out.
- * 
+ *
  * @author SkiBu Smith
  *
  */
 public abstract class AbstractServer {
-	
+
 	protected boolean constructed = false;
 
 	// Need to store this so can rebind
 	private String bindName;
-	
+
 	private final String agencyId;
-	
+
 	// Need to store this so can rebind
 	private Remote stub;
-	
+
 	// Only want to send e-mail the first time a rebind exception
 	// occurs. This way don't flood users with e-mails.
 	private boolean firstRebindTrySoLogError = true;
-	
+
 	// If sending out message that rebind exception failed then
 	// should send out another message when successful again so
-	// that supervisors know that situation handled. 
+	// that supervisors know that situation handled.
 	private boolean errorEmailedSoAlsoNotifyWhenSuccessful = false;
-	
-	// How frequently should rebind to rmiregistry in case 
+
+	// How frequently should rebind to rmiregistry in case
 	// it is restarted.
 	private static final long REBIND_RATE_SEC = 30;
-	
+
 	// Cache the registry. Only need one for entire application.
 	private static Registry registry = null;
-	
+
 	// Share the timer. Don't want separate thread for every RMI class
 	private static ScheduledThreadPoolExecutor rebindTimer = Timer.get();
-	
-	private static final Logger logger = 
+
+	private static final Logger logger =
 			LoggerFactory.getLogger(AbstractServer.class);
 
 	/********************** Member Functions **************************/
-	
+
 	/**
 	 * Binds the RMI implementation object to the registry so that it can be
 	 * accessed by a client. It also periodically rebinds the object every 30
@@ -108,7 +108,7 @@ public abstract class AbstractServer {
 	 * properly initialized when the subclass constructor is called. This is
 	 * fine as long as the Server object constructor doesn't do any further
 	 * initialization.
-	 * 
+	 *
 	 * @param agencyId
 	 *            For registering object with rmiregistry. Can have several
 	 *            different projects running on a server so need to specify the
@@ -119,7 +119,7 @@ public abstract class AbstractServer {
 	 */
 	protected AbstractServer(String agencyId, String objectName) {
 		this.agencyId = agencyId;
-	
+
 		try {
 			// First make sure that this object is a subclass of Remote
 			// since this class is only intended to be a parent class
@@ -131,7 +131,7 @@ public abstract class AbstractServer {
 				return;
 			}
 			Remote remoteThis = (Remote) this;
-			
+
 			logger.info("Setting up AbstractServer for RMI using secondary "
 					+ "port={}", RmiParams.getSecondaryRmiPort());
 			// Export the RMI stub. Specify that should use special port for
@@ -142,27 +142,28 @@ public abstract class AbstractServer {
 			// Make sure the registry exists
 			if (registry == null) {
 				try {
-					// Start up the RMI registry. If it has already been 
-					// started manually or by another process then will 
+					// Start up the RMI registry. If it has already been
+					// started manually or by another process then will
 					// get an exception, which is fine.
 					LocateRegistry.createRegistry(RmiParams.getRmiPort());
 				} catch (Exception e) {
 					// Most likely registry was already running
-					logger.debug("Exception occurred when trying to create " +
+					logger.info("Exception occurred when trying to create " +
 							"RMI registry. Most likely the registry was " +
-							"already running, which is fine. Message={}", 
+							"already running, which is fine. Message={}",
 							e.getMessage());
 				}
+
 				registry = LocateRegistry.getRegistry(RmiParams.getRmiPort());
 			}
-			
+
 			// Bind the stub to the RMI registry so that it can be accessed by
 			// name by the client.
 			bindName = getBindName(agencyId, objectName);
-			
-			// Bind the stub to the RMI registry in a loop so that even if 
+
+			// Bind the stub to the RMI registry in a loop so that even if
 			// rmiregistry is restarted the stub will quickly get bound to it.
-			// rebind() is called immediately and then again every 
+			// rebind() is called immediately and then again every
 			// REBIND_RATE_SEC seconds.
 			rebindTimer.scheduleAtFixedRate(
 					// Call rebind() using anonymous class
@@ -171,30 +172,30 @@ public abstract class AbstractServer {
 							rebind();
 						}
 					}, 0, REBIND_RATE_SEC, TimeUnit.SECONDS);
-			
+
 			constructed = true;
 		} catch (Exception e) {
 			// Log the error. Since RMI is critical send out e-mail as well so
 			// that the issue is taken care of.
-			logger.error(Markers.email(), 
+			logger.error(Markers.email(),
 					"For agencyId={} error occurred when constructing a RMI {}",
-					AgencyConfig.getAgencyId(), getClass().getSimpleName(), 
+					AgencyConfig.getAgencyId(), getClass().getSimpleName(),
 					e);
 		}
 	}
-	
+
 	/**
 	 * Rebinds the stub object to the RMI registry. This is important because
 	 * the RMI registry could be terminated and restarted, losing the information
-	 * on what has been bound. 
+	 * on what has been bound.
 	 */
     private void rebind() {
-    	logger.debug("Trying to rebind {} to RMI registry.", bindName);
+        logger.info("Trying to rebind {} to RMI registry.", bindName);
 
-    	try {
-    		try {
-				// Use rebind() instead of bind() for frequent case where 
-    			// object already bound
+        try {
+            try {
+				// Use rebind() instead of bind() for frequent case where
+                // object already bound
 				registry.rebind(bindName, stub);
 			} catch (Exception e) {
 				// An error occurred, likely because rmiregistry not running. This
@@ -202,19 +203,19 @@ public abstract class AbstractServer {
 				// then the process died.
 				logger.warn("Error occurred when trying to rebind RMI to {}. " +
 						"Therefore trying to automatically restart the " +
-						"rmiregistry. {}", 
+						"rmiregistry. {}",
 						bindName, e.getMessage());
-				LocateRegistry.createRegistry(RmiParams.getRmiPort());
+				/*LocateRegistry.createRegistry(RmiParams.getRmiPort());
 				// Now that registry has restarted try rebinding again
-				registry.rebind(bindName, stub);
+				registry.rebind(bindName, stub);*/
 			}
-			
-			logger.debug("Successfully rebound {} to RMI registry.", bindName);
-			
-			// Was successful rebinding so remember that for next time 
+
+			logger.info("Successfully rebound {} to RMI registry.", bindName);
+
+			// Was successful rebinding so remember that for next time
 			// try to rebind.
 			firstRebindTrySoLogError = true;
-			
+
 			// If e-mailed error message indicating problem then e-mail
 			// another notification indicating problem has been resolved
 			if (errorEmailedSoAlsoNotifyWhenSuccessful) {
@@ -223,9 +224,9 @@ public abstract class AbstractServer {
 					hostname = java.net.InetAddress.getLocalHost().getHostName();
 				} catch (UnknownHostException e1) {
 				}
-				logger.error(Markers.email(), 
+				logger.error(Markers.email(),
 						"For agencyId={} problem with rmiregistry on host {} "
-						+ "has been resolved.", 
+						+ "has been resolved.",
 						AgencyConfig.getAgencyId(), hostname);
 				errorEmailedSoAlsoNotifyWhenSuccessful = false;
 			}
@@ -240,7 +241,7 @@ public abstract class AbstractServer {
 				// an e-mail alerting appropriate people.
 				String msg = rebindErrorMessage(e);
 				logger.error(Markers.email(), msg, e);
-								
+
 				errorEmailedSoAlsoNotifyWhenSuccessful = true;
 			} else {
 				// Have already logged and sent out e-mail so this time
@@ -249,10 +250,10 @@ public abstract class AbstractServer {
 			}
 		}
 	}
-    
+
 	/**
 	 * Returns appropriate error message for when rebind error occurs.
-	 * 
+	 *
 	 * @param e
 	 * @return
 	 */
@@ -262,7 +263,7 @@ public abstract class AbstractServer {
 			hostname = java.net.InetAddress.getLocalHost().getHostName();
 		} catch (UnknownHostException e1) {
 		}
-		
+
 		String msg = "It appears that the rmiregistry is not running on host "
 				+ hostname
 				+ ". Make sure it is started immediately. "
@@ -270,10 +271,10 @@ public abstract class AbstractServer {
 				+ bindName + ": " + e.getMessage();
 		return msg;
     }
-    
+
 	/**
 	 * The name that the server object is bound to needs both the classname
-	 * to identify the object but also the agencyId since multiple 
+	 * to identify the object but also the agencyId since multiple
 	 * projects can be running on a machine that uses a single RMI registry.
 	 * @param agencyId
 	 * @param className
@@ -282,13 +283,13 @@ public abstract class AbstractServer {
 	public static String getBindName(String agencyId, String className) {
 		return agencyId + "-" + className;
 	}
-	
+
 	public String getAgencyId() {
 		return agencyId;
 	}
-	
+
 	/**
-	 * Specifies if this object was successfully constructed and 
+	 * Specifies if this object was successfully constructed and
 	 * is ready for use.
 	 * @return
 	 */

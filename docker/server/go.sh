@@ -37,10 +37,10 @@ echo GTFS_URL: $GTFS_URL
 VEHICLE_POSITIONS_URL=`echo $LINE | cut -d ' ' -f3`
 echo VEHICLE_POSITIONS_URL: $VEHICLE_POSITIONS_URL
 
-RMI_HOSTNAME=`docker inspect transitclock-rmi-registry-instance | grep -i ipaddress | tail -1 | cut -d \" -f4`
-echo RMI_HOSTNAME: $RMI_HOSTNAME
+# RMI_HOSTNAME=`docker inspect transitclock-rmi-registry-instance | grep -i ipaddress | tail -1 | cut -d \" -f4`
+# echo RMI_HOSTNAME: $RMI_HOSTNAME
 
 DB_HOSTNAME=`docker inspect transitclock-db-$PRIMARY_AGENCY_ID | grep -i ipaddress | tail -1 | cut -d \" -f4`
 echo DB_HOSTNAME: $DB_HOSTNAME
 
-docker run --name transitclock-server-instance --rm -e PGPASSWORD=$PGPASSWORD -p 8080:8080 transitclock-server start-server.sh $PRIMARY_AGENCY_ID $GTFS_URL $VEHICLE_POSITIONS_URL $RMI_HOSTNAME $DB_HOSTNAME
+docker run --name transitclock-server-instance --rm -e PGPASSWORD=$PGPASSWORD -p 8080:8080 transitclock-server start-server.sh $PRIMARY_AGENCY_ID $GTFS_URL $VEHICLE_POSITIONS_URL dummy-rmi-host $DB_HOSTNAME

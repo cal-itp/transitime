@@ -1,6 +1,6 @@
 /*
  * This file is part of Transitime.org
- * 
+ *
  * Transitime.org is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPL) as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -33,7 +33,7 @@ public class RmiConfig {
 	 * RMI host name from the WebAgencies table in the web database. But when
 	 * doing simple calls using this parameter eliminates the need to connect to
 	 * the web database, speeding up testing.
-	 * 
+	 *
 	 * @return
 	 */
 	public static String rmiHost() {
@@ -47,11 +47,11 @@ public class RmiConfig {
 					+ "table in the web database. But when doing simple calls "
 					+ "using this parameter eliminates the need to connect to "
 					+ "the web database, speeding up testing.");
-	
+
 	/**
 	 * Which port to use for RMI calls. Usually RMI uses port 1099 but using
 	 * default of 2099 to not interfere with other RMI based applications
-	 * 
+	 *
 	 * @return
 	 */
 	public static int rmiPort() {
@@ -59,7 +59,7 @@ public class RmiConfig {
 	}
 	private static IntegerConfigValue rmiPort =
 			new IntegerConfigValue("transitclock.rmi.rmiPort",
-					2099,
+					1099,
 					"Which port to use for RMI calls. Usually RMI uses port "
 					+ "1099 but using default of 2099 to not interfere with "
 					+ "other RMI based applications.");
@@ -71,7 +71,7 @@ public class RmiConfig {
 	 * Therefore using default value of 2098 so that the port is consistent.
 	 * Every server on a machine must use a different secondary port for
 	 * communication.
-	 * 
+	 *
 	 * @return
 	 */
 	public static int secondaryRmiPort() {
@@ -84,7 +84,7 @@ public class RmiConfig {
 					+ "initial communication has been established. Usually "
 					+ "RMI uses port 0 which means any port. But then can't "
 					+ "configure firewall to limit access to specific ports. "
-					+ "Therefore using default value of 2098 so that the port " 
+					+ "Therefore using default value of 2098 so that the port "
 					+ "is consistent. Every server on a machine must use a "
 					+ "different secondary port for communication.");
 
