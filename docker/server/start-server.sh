@@ -1,15 +1,22 @@
 #!/usr/bin/env bash
 
-find /usr/local/transitclock/config/ -type f -exec sed -i s#"POSTGRES_PORT_5432_TCP_ADDR"#"$POSTGRES_PORT_5432_TCP_ADDR"#g {} \;
-find /usr/local/transitclock/config/ -type f -exec sed -i s#"POSTGRES_PORT_5432_TCP_PORT"#"$POSTGRES_PORT_5432_TCP_PORT"#g {} \;
-find /usr/local/transitclock/config/ -type f -exec sed -i s#"PGPASSWORD"#"$PGPASSWORD"#g {} \;
-find /usr/local/transitclock/config/ -type f -exec sed -i s#"AGENCYNAME"#"$AGENCYNAME"#g {} \;
+if [ "$#" -ne 5 ]; then
+  echo "Usage: go.sh <agency-id> <gtfs-url> <vehicle-positions-url> <rmi-hostname> <db-hostname>" >&2
+  exit 1
+fi
 
-### FIXME create-prop-file.sh with args
+AGENCY_ID=$1
+GTFS_URL=$2
+VEHICLE_POSITIONS_URL=$3
+RMI_HOSTNAME=$4
+DB_HOSTNAME=$5
+
+# usage: create-prop-file.sh <agency-id> <gtfs-url> <vehicle-positions-url> <db-hostname> <db-port>"
+create-prop-file.sh $AGENCY_ID $GTFS_URL $VEHICLE_POSITIONS_URL $DB_HOSTNAME 5432
 
 echo 'starting server...'
 
-export JAVA_OPTS="-Dtransitclock.apikey=bfd3d506 -Dtransitclock.configFiles=/usr/local/transitclock/config/transitclock.properties"
+export JAVA_OPTS="-Dtransitclock.apikey=bfd3d506 -Dtransitclock.rmi.rmiHost=$RMI_HOSTNAME -Dtransitclock.configFiles=/usr/local/transitclock/config/transitclock.properties"
 
 echo JAVA_OPTS $JAVA_OPTS
 

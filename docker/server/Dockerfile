@@ -12,7 +12,6 @@ RUN mkdir -p "$CATALINA_HOME"
 WORKDIR $CATALINA_HOME
 
 ENV TOMCAT_MAJOR 8
-# ENV TOMCAT_VERSION 8.0.43
 ENV TOMCAT_VERSION 8.5.56
 ENV TOMCAT_TGZ_URL https://archive.apache.org/dist/tomcat/tomcat-$TOMCAT_MAJOR/v$TOMCAT_VERSION/bin/apache-tomcat-$TOMCAT_VERSION.tar.gz
 
@@ -39,8 +38,8 @@ WORKDIR /usr/local/transitclock
 COPY api.war $CATALINA_HOME/webapps
 COPY web.war $CATALINA_HOME/webapps
 COPY hibernate.cfg.xml /usr/local/transitclock/config/hibernate.cfg.xml
-COPY transitclock.properties /usr/local/transitclock/config/transitclock.properties
 COPY start-server.sh /usr/local/transitclock/bin/start-server.sh
+COPY create-prop-file.sh /usr/local/transitclock/bin/create-prop-file.sh
 
 ENV PATH="/usr/local/transitclock/bin:${PATH}"
 

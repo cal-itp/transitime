@@ -29,6 +29,7 @@ echo GTFS_URL: $GTFS_URL
 
 VEHICLE_POSITIONS_URL=`echo $LINE | cut -d ' ' -f3`
 echo VEHICLE_POSITIONS_URL: $VEHICLE_POSITIONS_URL
+
 SAVED_IFS=$IFS
 IFS=$'\n'
 
@@ -60,6 +61,8 @@ fi
 SAVED_IFS=$IFS
 IFS=$'\n'
 
+### docker image inspect transitclock-core >& /dev/null
+### echo $?
 if [ "$PERFORM_BUILD" == "1" ]; then
   docker build --no-cache -t transitclock-core .
 fi
