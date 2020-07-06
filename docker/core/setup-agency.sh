@@ -23,6 +23,7 @@ DB_PORT=$5
 PRIMARY_AGENCY_DB_HOSTNAME=$6
 PRIMARY_AGENCY_DB_PORT=$7
 PRIMARY_AGENCY_ID=$8
+NUMERIC_IP=`hostname -i`
 
 echo AGENCY_ID: $AGENCY_ID
 echo GTFS_URL: $GTFS_URL
@@ -32,6 +33,7 @@ echo DB_PORT: $DB_PORT
 echo PRIMARY_AGENCY_DB_HOSTNAME: $PRIMARY_AGENCY_DB_HOSTNAME
 echo PRIMARY_AGENCY_DB_PORT: $PRIMARY_AGENCY_DB_PORT
 echo PRIMARY_AGENCY_ID: $PRIMARY_AGENCY_ID
+echo NUMERIC_IP: $NUMERIC_IP
 
 create-prop-file.sh $AGENCY_ID $GTFS_URL $VEHICLE_POSITION__URL $DB_HOSTNAME $DB_PORT || exit 0
 
@@ -72,7 +74,7 @@ java \
   -Dtransitclock.hibernate.configFile=/usr/local/transitclock/config/hibernate.cfg.xml \
   -cp /usr/local/transitclock/lib/Core.jar org.transitclock.db.webstructs.WebAgency \
   $AGENCY_ID \
-  $PRIMARY_AGENCY_DB_HOSTNAME \
+  $NUMERIC_IP \
   $DBNAME \
   postgresql \
   $PRIMARY_AGENCY_DB_HOSTNAME \

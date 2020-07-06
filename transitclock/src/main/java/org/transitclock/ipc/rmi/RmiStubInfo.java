@@ -93,15 +93,7 @@ public class RmiStubInfo {
 
 		logger.info("- webAgency.getHostName(): {}", webAgency.getHostName());
 
-		// ### FIXME: hardcoded IPs for agency RMI hosts for now to be able to
-		// run distributed system end to end
-		if (agencyId.equals("halifax")) {
-			return "172.17.0.4";
-		} else if (agencyId.equals("monterey")) {
-			return "172.17.0.6";
-		} else {
-			return null;
-		}
+		return webAgency.getHostName();
 	}
 
 	/**
