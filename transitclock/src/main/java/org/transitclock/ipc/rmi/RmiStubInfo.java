@@ -37,6 +37,7 @@ public class RmiStubInfo {
 
 	final String agencyId;
 	final String className;
+	private int hostNumber = -1;
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(RmiStubInfo.class);
@@ -92,7 +93,7 @@ public class RmiStubInfo {
 
 		logger.info("- webAgency.getHostName(): {}", webAgency.getHostName());
 
-		// ### very ugly hack to get local rmi registry for agency
+		/*// ### very ugly hack to get local rmi registry for agency
 		// For testing only, heavily depends on container starting
 		// sequence and other things
 		String[] args = webAgency.getHostName().split("\\.");
@@ -103,11 +104,25 @@ public class RmiStubInfo {
 			sb.append('.');
 		}
 
-		sb.append(Integer.parseInt(args[args.length - 1]) + 1);
+		if (hostNumber < 0) {
+			hostNumber = Integer.parseInt(args[args.length - 1]) + 1;
+		} else {
+			hostNumber += 2;
+		}
+
+		sb.append(hostNumber);
 		logger.info("- sb(): {}", sb);
 
 
-		return sb.toString();
+		return sb.toString();*/
+
+		if (agencyId.equals("halifax")) {
+			return "172.17.0.4";
+		} else if (agencyId.equals("monterey")) {
+			return "172.17.0.6";
+		} else {
+			return null;
+		}
 	}
 
 	/**
