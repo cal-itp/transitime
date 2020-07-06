@@ -93,29 +93,8 @@ public class RmiStubInfo {
 
 		logger.info("- webAgency.getHostName(): {}", webAgency.getHostName());
 
-		/*// ### very ugly hack to get local rmi registry for agency
-		// For testing only, heavily depends on container starting
-		// sequence and other things
-		String[] args = webAgency.getHostName().split("\\.");
-		StringBuilder sb = new StringBuilder();
-
-		for (int i=0; i<args.length-1; i++) {
-			sb.append(args[i]);
-			sb.append('.');
-		}
-
-		if (hostNumber < 0) {
-			hostNumber = Integer.parseInt(args[args.length - 1]) + 1;
-		} else {
-			hostNumber += 2;
-		}
-
-		sb.append(hostNumber);
-		logger.info("- sb(): {}", sb);
-
-
-		return sb.toString();*/
-
+		// ### FIXME: hardcoded IPs for agency RMI hosts for now to be able to
+		// run distributed system end to end
 		if (agencyId.equals("halifax")) {
 			return "172.17.0.4";
 		} else if (agencyId.equals("monterey")) {
