@@ -40,7 +40,7 @@ IFS=$'\n'
 
 ID=`docker ps | grep -v ^CONTAINER | grep transitclock-core-$AGENCY_ID | cut -d ' ' -f1`
 
-if [ ! -z "$ID"]; then
+if [ ! -z "$ID" ]; then
   docker stop $ID
   docker rm $ID
 fi
@@ -66,8 +66,6 @@ fi
 SAVED_IFS=$IFS
 IFS=$'\n'
 
-### docker image inspect transitclock-core >& /dev/null
-### echo $?
 if [ "$PERFORM_BUILD" == "1" ]; then
   docker build --no-cache -t transitclock-core .
 fi
