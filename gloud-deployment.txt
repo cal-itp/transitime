@@ -1,0 +1,26 @@
+- create gcloud project, such as 'transitclock'
+- set as active project
+
+gcloud sql instances create transitclock-postgres-test --database-version=POSTGRES_9_6 \
+       --cpu=1 --memory=3840MB \
+       --region=us-west2
+
+gcloud sql users set-password postgres --instance=transitclock-postgres-test --password=[password]
+
+- list sql instances with 'gcloud sql instances list'
+
+
+gsutil mb -l US-WEST2 on gs://transitclock-resources/
+
+curl -X GET \
+  -H "Authorization: Bearer [OAUTH2_TOKEN]" \
+  -o "[SAVE_TO_LOCATION]" \
+  "https://storage.googleapis.com/storage/v1/b/[BUCKET_NAME]/o/[OBJECT_NAME]?alt=media"
+
+4/1gGnCZWDwzw4G_21yUK422pImlgtwafRVufbWUiOWEJD7OPv03ObN4fXHExgwAradLRfsnRTDqP9pkJsPIKruRQ
+ya29.a0AfH6SMBxCPncD9PxcqIGRg27eQ55MCEoWrlcze8tvPw3tYxREDkxJ7Dn38gsJV-pVWV4Akrtnp6BkFzMABLBbmBjdGeYZW8hC68fzcCHYn9FUo20HvELdAq5yL4iHRX7AHTpAxGkhf5-5fNIwxnUqTL4ihbqJOxC6zw
+
+curl -X GET \
+  -H ya29.a0AfH6SMCkPHJqY-FutitlsDN5-jnhmo8lIiapXHms4tHkDSUNx3WTu8xZuPh07jQzF6OOrgkiLWjNiIUGVlgloNhN2E5suAukTbe2NTZlRtkhm_37Z01hZnnIhvNbmZ_q-idUhgH1NH0jzBdhtjbhcaRL2vBY06wz2u4 \
+  -o start-registry.sh \
+  https://storage.googleapis.com/storage/v1/b/transitclock-resources/o/start-registry.sh?alt=media
