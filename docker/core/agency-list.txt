@@ -1,3 +1,6 @@
 halifax http://gtfs.halifax.ca/static/google_transit.zip http://gtfs.halifax.ca/realtime/Vehicle/VehiclePositions.pb
 monterey http://www.mst.org/google/google_transit.zip http://206.128.158.191/TMGTFSRealTimeWebService/Vehicle/VehiclePositions.pb
-monterey-1 http://www.mst.org/google/google_transit.zip http://206.128.158.191/TMGTFSRealTimeWebService/Vehicle/VehiclePositions.pb
+riverside http://www.riversidetransit.com/google_transit.zip https://rtabus.com/gtfsrt/vehicles
+octa https://www.octa.net/current/google_transit.zip http://api.octa.net/GTFSRealTime/protoBuf/VehiclePositions.aspx
+santamonica http://gtfs.bigbluebus.com/current.zip http://gtfs.bigbluebus.com/vehiclepositions.bin
+

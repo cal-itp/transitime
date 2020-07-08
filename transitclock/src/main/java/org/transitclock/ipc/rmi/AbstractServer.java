@@ -141,6 +141,9 @@ public abstract class AbstractServer {
 
 			// Make sure the registry exists
 			if (registry == null) {
+				logger.info("Attempting to create or get registry on port={}"
+					, RmiParams.getSecondaryRmiPort());
+
 				try {
 					// Start up the RMI registry. If it has already been
 					// started manually or by another process then will

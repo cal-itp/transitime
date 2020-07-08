@@ -16,7 +16,7 @@ done
 
 if [ "$#" -ne 2 ]; then
   echo "Usage: go.sh <agency-id> <rmi-hostname>" >&2
-  exit 1
+  exit 0
 fi
 
 AGENCY_ID=$1
