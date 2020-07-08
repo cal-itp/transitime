@@ -45,6 +45,10 @@ Created [https://www.googleapis.com/compute/v1/projects/transitclock-282522/zone
 NAME             ZONE        MACHINE_TYPE   PREEMPTIBLE  INTERNAL_IP  EXTERNAL_IP   STATUS
 rmi-registry-vm  us-west2-c  n1-standard-1               10.168.0.2   34.94.24.132  RUNNING
 
+
+# get container name by first connecting without --container, and then running 'docker ps'
+gcloud compute ssh transitclock-core-halifax --command="bash -i -l" --container klt-transitclock-core-halifax-bmfr
+
 gcloud compute instances stop rmi-registry-vm
 
 ### next steps:
