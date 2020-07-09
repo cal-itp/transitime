@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [ "$#" -ne 5 ]; then
-  echo "Usage: go.sh <agency-id> <gtfs-url> <vehicle-positions-url> <rmi-hostname> <db-hostname>" >&2
+  echo "Usage: start-server.sh <agency-id> <gtfs-url> <vehicle-positions-url> <rmi-hostname> <db-hostname>" >&2
   exit 1
 fi
 

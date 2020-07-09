@@ -47,3 +47,6 @@ RUN \
     sed -i 's/\r//' /usr/local/transitclock/bin/*.sh &&\
     chmod 777 /usr/local/transitclock/bin/*.sh
 
+CMD start-server.sh $PRIMARY_AGENCY_ID $GTFS_URL $VEHICLE_POSITIONS_URL $RMI_HOSTNAME $DB_HOSTNAME
+
+

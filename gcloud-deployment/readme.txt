@@ -52,8 +52,9 @@ gcloud compute ssh transitclock-core-halifax --command="bash -i -l" --container 
 gcloud compute instances stop rmi-registry-vm
 
 ### next steps:
-- check with port AbstractServer starts on?
-- eliminate need for docker/core/go.sh
+- test server locally with RMI host set
+- create firewall rule for 8080
+- add transitclock-server tp server deploy script
 - transitime/gcloud-deply folder:
   + agency-list.txtx
   + deploy.sh:
@@ -62,3 +63,4 @@ gcloud compute instances stop rmi-registry-vm
       . start sql instance
       . start core
     o start server
+- test create-with-container with docker.io/[postgres]
