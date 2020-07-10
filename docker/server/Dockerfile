@@ -33,10 +33,9 @@ RUN mkdir /usr/local/transitclock/data
 
 WORKDIR /usr/local/transitclock
 
-# RUN  curl -s https://api.github.com/repos/TheTransitClock/transitime/releases/latest | jq -r ".assets[].browser_download_url" | grep 'Core.jar\|api.war\|web.war' | xargs -L1 wget
+RUN curl -o $CATALINA_HOME/webapps/api.war https://storage.googleapis.com/transitclock-resources/server/api.war
+RUN curl -o $CATALINA_HOME/webapps/web.war https://storage.googleapis.com/transitclock-resources/server/web.war
 
-COPY api.war $CATALINA_HOME/webapps
-COPY web.war $CATALINA_HOME/webapps
 COPY hibernate.cfg.xml /usr/local/transitclock/config/hibernate.cfg.xml
 COPY start-server.sh /usr/local/transitclock/bin/start-server.sh
 COPY create-prop-file.sh /usr/local/transitclock/bin/create-prop-file.sh

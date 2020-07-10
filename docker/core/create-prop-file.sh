@@ -40,4 +40,4 @@ echo transitclock.hibernate.configFile=/usr/local/transitclock/config/hibernate.
 echo transitclock.modules.optionalModulesList=org.transitclock.avl.GtfsRealtimeModule >> $PROPFILE
 echo transitclock.web.mapTileUrl=https://tile.openstreetmap.org/{z}/{x}/{y}.png >> $PROPFILE
 echo transitclock.web.mapTileCopyright=OpenStreetMap >> $PROPFILE
-echo transitclock.rmi.secondaryRmiPort=0 >> $PROPFILE
+echo transitclock.rmi.secondaryRmiPort=1098 >> $PROPFILE

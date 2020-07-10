@@ -13,7 +13,7 @@ fi
 AGENCY_ID="halifax"
 GTFS_URL="http://gtfs.halifax.ca/static/google_transit.zip"
 VEHICLE_POSITIONS_URL="http://gtfs.halifax.ca/realtime/Vehicle/VehiclePositions.pb"
-PRESERVE_DB="0"
+PRESERVE_DB="1"
 RMI_HOSTNAME="34.94.24.132"
 DB_HOSTNAME="34.94.231.127"
 PRIMARY_AGENCY_HOST="34.94.231.127"
