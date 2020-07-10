@@ -15,7 +15,8 @@ RUN mkdir /usr/local/transitclock/data
 
 WORKDIR /usr/local/transitclock
 
-COPY Core.jar /usr/local/transitclock/lib/Core.jar
+RUN curl -o /usr/local/transitclock/lib/Core.jar https://storage.googleapis.com/transitclock-resources/core/Core.jar
+
 COPY setup-agency.sh /usr/local/transitclock/bin/setup-agency.sh
 COPY create-prop-file.sh /usr/local/transitclock/bin/create-prop-file.sh
 COPY start-core.sh /usr/local/transitclock/bin/start-core.sh

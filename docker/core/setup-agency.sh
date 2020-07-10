@@ -23,7 +23,7 @@ DB_PORT=$5
 PRIMARY_AGENCY_DB_HOSTNAME=$6
 PRIMARY_AGENCY_DB_PORT=$7
 PRIMARY_AGENCY_ID=$8
-NUMERIC_IP=`hostname -i`
+NUMERIC_IP=`curl ifconfig.me`
 
 echo AGENCY_ID: $AGENCY_ID
 echo GTFS_URL: $GTFS_URL
@@ -78,7 +78,7 @@ java \
   $DBNAME \
   postgresql \
   $PRIMARY_AGENCY_DB_HOSTNAME \
-  wildcard \
+  postgres \
   "" || exit 0
 
 

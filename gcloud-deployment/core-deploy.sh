@@ -22,5 +22,6 @@ PRIMARY_AGENCY_ID="halifax"
 gcloud compute instances create-with-container transitclock-core-$AGENCY_ID \
   --container-stdin --container-tty \
   --container-image gcr.io/transitclock-282522/core \
+  --boot-disk-size=10GB \
   --tags rmi-registry \
   --container-env PGPASSWORD=$PGPASSWORD,AGENCY_ID=$AGENCY_ID,GTFS_URL=$GTFS_URL,VEHICLE_POSITIONS_URL=$VEHICLE_POSITIONS_URL,PRESERVE_DB=$PRESERVE_DB,RMI_HOSTNAME=$RMI_HOSTNAME,DB_HOSTNAME=$DB_HOSTNAME,PRIMARY_AGENCY_HOST=$PRIMARY_AGENCY_HOST,PRIMARY_AGENCY_ID=$PRIMARY_AGENCY_ID
