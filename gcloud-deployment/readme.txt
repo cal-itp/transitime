@@ -43,6 +43,7 @@ gcloud config set compute/region us-west2
 # gcloud compute firewall-rules create allow-http --allow tcp:80 --target-tags http-server
 gcloud compute firewall-rules create allow-rmi --allow tcp:1099 --target-tags rmi-registry
 gcloud compute firewall-rules create allow-secondary-http --allow tcp:8080 --target-tags transitclock-server
+gcloud compute firewall-rules create allow-postgres --allow tcp:5432 --target-tags postgres
 gcloud compute instances create-with-container rmi-registry-vm --container-stdin --container-tty --container-image gcr.io/transitclock-282522/rmiregistry --tags rmi-registry
 
 Created [https://www.googleapis.com/compute/v1/projects/transitclock-282522/zones/us-west2-c/instances/rmi-registry-vm].
@@ -53,6 +54,8 @@ rmi-registry-vm  us-west2-c  n1-standard-1               10.168.0.2   34.94.24.1
 # get container name by first connecting without --container, and then running 'docker ps'
 gcloud compute ssh transitclock-core-halifax --container klt-transitclock-core-halifax-bmfr
 gcloud compute ssh transitclock-server --container klt-transitclock-server-jtvw
+gcloud compute ssh db-monterey --container klt-db-monterey-fbkd
+gcloud compute ssh transitclock-core-monterey --container klt-transitclock-core-monterey-fixi
 
 gcloud compute instances stop rmi-registry-vm
 
