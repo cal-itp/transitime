@@ -10,7 +10,25 @@ if [ "$PGPASSWORD" == "transitclock" ]; then
     exit 0
 fi
 
-AGENCY_ID="monterey"
+AGENCY_ID="monterey-0"
+
+gcloud compute instances create-with-container db-$AGENCY_ID \
+  --container-stdin --container-tty \
+  --container-image docker.io/postgres:9.6.3 \
+  --boot-disk-size=10GB \
+  --tags postgres \
+  --container-env POSTGRES_PASSWORD=$PGPASSWORD
+
+AGENCY_ID="monterey-1"
+
+gcloud compute instances create-with-container db-$AGENCY_ID \
+  --container-stdin --container-tty \
+  --container-image docker.io/postgres:9.6.3 \
+  --boot-disk-size=10GB \
+  --tags postgres \
+  --container-env POSTGRES_PASSWORD=$PGPASSWORD
+
+AGENCY_ID="monterey-2"
 
 gcloud compute instances create-with-container db-$AGENCY_ID \
   --container-stdin --container-tty \

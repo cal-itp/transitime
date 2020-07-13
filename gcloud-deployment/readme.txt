@@ -12,8 +12,8 @@ gcloud sql users set-password postgres --instance=transitclock-postgres-test --p
 NAME                        DATABASE_VERSION  LOCATION    TIER              PRIMARY_ADDRESS  PRIVATE_ADDRESS  STATUS
 transitclock-postgres-test  POSTGRES_9_6      us-west2-a  db-custom-1-3840  34.94.231.127    -                RUNNABLE
 
-
 gsutil mb -l US-WEST2 on gs://transitclock-resources/
+curl -o gtfs.zip https://storage.googleapis.com/transitclock-resources/gtfs/gtfs-octa.zip
 
 curl -X GET \
   -o start-registry.sh \
@@ -42,8 +42,13 @@ gcloud config set compute/region us-west2
 # --tags http-server
 # gcloud compute firewall-rules create allow-http --allow tcp:80 --target-tags http-server
 gcloud compute firewall-rules create allow-rmi --allow tcp:1099 --target-tags rmi-registry
+gcloud compute firewall-rules create allow-secondary-rmi --allow tcp:1098 --target-tags rmi-registry
 gcloud compute firewall-rules create allow-secondary-http --allow tcp:8080 --target-tags transitclock-server
 gcloud compute firewall-rules create allow-postgres --allow tcp:5432 --target-tags postgres
+
+gcloud compute firewall-rules list
+
+
 gcloud compute instances create-with-container rmi-registry-vm --container-stdin --container-tty --container-image gcr.io/transitclock-282522/rmiregistry --tags rmi-registry
 
 Created [https://www.googleapis.com/compute/v1/projects/transitclock-282522/zones/us-west2-c/instances/rmi-registry-vm].
@@ -61,6 +66,17 @@ gcloud compute instances stop rmi-registry-vm
 
 gcloud builds submit --tag gcr.io/transitclock-282522/server
 
+gcloud compute instances describe db-monterey-0 \
+  --format='get(networkInterfaces[0].accessConfigs[0].natIP)'
+
+psql -h 35.236.105.222 -p 5432 -U postgres -d agency-monterey-0 -c 'select count(*) from trips'
+gcloud compute ssh transitclock-core-monterey-0 "docker ps"
+
+
+gcloud logging read "resource.type=cloud_run_revision AND resource.labels.service_name=transitclock-core-monterey-0" --project transitclock-282522
+
+GET https://logging.googleapis.com/v2/{parent=folders/*}/logs
+
 ### next steps:
 - test server locally with RMI host set
 - create firewall rule for 8080
@@ -74,3 +90,8 @@ gcloud builds submit --tag gcr.io/transitclock-282522/server
       . start core
     o start server
 - test create-with-container with docker.io/[postgres]
+
+check if core is set up:
+- does agency-<id> exist?
+- is trips table populated?
+- tail -f core.log on core instance
