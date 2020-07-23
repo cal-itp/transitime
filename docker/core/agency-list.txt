@@ -2,4 +2,5 @@ monterey http://www.mst.org/google/google_transit.zip http://206.128.158.191/TMG
 riverside https://www.riversidetransit.com/google_transit.zip https://rtabus.com/gtfsrt/vehicles
 octa https://storage.googleapis.com/transitclock-resources/gtfs/gtfs-octa.zip http://api.octa.net/GTFSRealTime/protoBuf/VehiclePositions.aspx
 santamonica http://gtfs.bigbluebus.com/current.zip http://gtfs.bigbluebus.com/vehiclepositions.bin
+cleanairexpress http://cleanairexpress.com/GTFS/06.18.2020%20CAE%20GTFS.zip https://lat-long-prototype.wl.r.appspot.com/vehicle-positions.pb?agency=clean-air-express
 

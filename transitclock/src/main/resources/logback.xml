@@ -374,7 +374,7 @@
 	<!-- For all the data logging files. Note: additivity must be set to false
 		so that data only logged to the data files instead of also to the core logging
 		file. -->
-	<logger name="org.transitclock.db.structs.ArrivalDeparture" level="info"
+	<logger name="org.transitclock.db.structs.ArrivalDeparture" level="warn"
 		additivity="false">
 		<appender-ref ref="ARRIVAL_DEPARTURE" />
 	</logger>
@@ -394,7 +394,7 @@
 	</logger>
 
 	<logger name="org.transitclock.core.PredictionGeneratorDefaultImpl"
-		level="debug" additivity="false">
+		level="warn" additivity="false">
 		<appender-ref ref="PREDICTION" />
 	</logger>
 
@@ -414,12 +414,12 @@
 		<appender-ref ref="MATCH" />
 	</logger>
 
-	<logger name="org.transitclock.avl" level="info" additivity="false">
+	<logger name="org.transitclock.avl" level="warn" additivity="false">
 		<appender-ref ref="AVL" />
 	</logger>
 
 	<logger name="org.transitclock.core.dataCache.TripDataHistoryCache"
-		level="debug" additivity="false">
+		level="warn" additivity="false">
 		<appender-ref ref="CACHE" />
 	</logger>
 	<logger name="org.transitclock.core.dataCache.KalmanErrorCache"
@@ -427,7 +427,7 @@
 		<appender-ref ref="CACHE" />
 	</logger>
 	<logger name="org.transitclock.core.dataCache.frequency.FrequencyBasedHistoricalAverageCache"
-		level="debug" additivity="false">
+		level="warn" additivity="false">
 		<appender-ref ref="CACHE" />
 	</logger>
 	<logger name="org.transitclock.core.dataCache.scheduled.ScheduledBasedHistoricalAverageCache"
@@ -492,7 +492,7 @@
 		<appender-ref ref="PREDICTION" />
 	</logger>
 	<logger name="org.transitclock.core.dataCache"
-		level="debug" additivity="false">
+		level="warn" additivity="false">
 		<appender-ref ref="CACHE" />
 	</logger>
 	
@@ -510,7 +510,7 @@
 	</logger>
 
 	<logger name="org.transitclock.core.ArrivalDepartureGeneratorDefaultImpl"
-		level="debug" additivity="true">
+		level="warn" additivity="true">
 		<appender-ref ref="ARRIVAL_DEPARTURE" />
 	</logger>
 	
@@ -554,7 +554,7 @@
 		<appender-ref ref="CORE_DEBUG" /> </logger> -->
 
 	<!-- <logger name="org.transitclock.core.ArrivalDepartureGeneratorDefaultImpl"
-		level="debug" additivity="true"> <appender-ref ref="ARRIVAL_DEPARTURE" /> </logger> -->
+		level="warn" additivity="true"> <appender-ref ref="ARRIVAL_DEPARTURE" /> </logger> -->
 
 	<!-- Set default level of root logger to "info" instead of to the the default
 		of "debug". This way the default is to only see important messages. Debug
