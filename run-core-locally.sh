@@ -4,7 +4,7 @@
 # find logs/halifax -name "*.log" -exec rm {} \; -print
 
 if [ "$#" -ne 1 ]; then
-  echo "Usage: setup-agency <agency-id>" >&2
+  echo "Usage: run-core-locally.sh <agency-id>" >&2
   exit 0
 fi
 

@@ -52,6 +52,7 @@ java \
   -storeNewRevs \
   -skipDeleteRevs \
   -gtfsUrl $GTFS_URL \
+  -maxDistanceBetweenStops 150000 \
   -maxTravelTimeSegmentLength 100 || exit 0
 
 java \

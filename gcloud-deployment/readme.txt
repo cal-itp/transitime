@@ -70,12 +70,22 @@ gcloud compute instances describe db-monterey-0 \
   --format='get(networkInterfaces[0].accessConfigs[0].natIP)'
 
 psql -h 35.236.105.222 -p 5432 -U postgres -d agency-monterey-0 -c 'select count(*) from trips'
+psql -h 34.94.152.206 -p 5432 -U postgres -d agency-cleanairexpress-0
 gcloud compute ssh transitclock-core-monterey-0 "docker ps"
 
 
 gcloud logging read "resource.type=cloud_run_revision AND resource.labels.service_name=transitclock-core-monterey-0" --project transitclock-282522
 
 GET https://logging.googleapis.com/v2/{parent=folders/*}/logs
+
+gcloud bucket access:
+gsutil ls -l -r gs://transitclock-resources
+gsutil cp transitclock/target/Core.jar gs://transitclock-resources/core/Core.jar
+
+http://34.94.152.206:8080/web
+http://34.94.157.136:8080/web
+
+gcloud compute ssh transitclock-core-cleanairexpress-0 --container klt-transitclock-core-cleanairexpress-0-qyfo
 
 ### next steps:
 - test server locally with RMI host set
