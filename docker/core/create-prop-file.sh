@@ -29,6 +29,8 @@ rm -f $PROPFILE
 touch $PROPFILE
 
 echo transitclock.core.agencyId=$AGENCY_ID >> $PROPFILE
+echo transitclock.core.allowableEarlySeconds=7200 >> $PROPFILE
+echo transitclock.core.allowableLateSeconds=7200 >> $PROPFILE
 echo transitclock.db.dbUserName=postgres >> $PROPFILE
 echo transitclock.db.dbPassword=$PGPASSWORD >> $PROPFILE
 echo transitclock.db.dbName=$DBNAME >> $PROPFILE
