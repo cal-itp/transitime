@@ -25,6 +25,11 @@ echo
 PROPFILE=/usr/local/transitclock/config/$AGENCY_ID.properties
 DBNAME=agency-$AGENCY_ID
 
+CORE_COUNT=`ps -ef | grep java.*transitclock.*Core.jar | grep -v ' grep ' | wc -l | awk '{print $1}'`
+echo CORE_COUNT: $CORE_COUNT
+SECONDARY_RMI_PORT=`expr 1089 + $CORE_COUNT`
+echo SECONDARY_RMI_PORT: $SECONDARY_RMI_PORT
+
 rm -f $PROPFILE
 touch $PROPFILE
 
@@ -42,4 +47,4 @@ echo transitclock.hibernate.configFile=/usr/local/transitclock/config/hibernate.
 echo transitclock.modules.optionalModulesList=org.transitclock.avl.GtfsRealtimeModule >> $PROPFILE
 echo transitclock.web.mapTileUrl=https://tile.openstreetmap.org/{z}/{x}/{y}.png >> $PROPFILE
 echo transitclock.web.mapTileCopyright=OpenStreetMap >> $PROPFILE
-echo transitclock.rmi.secondaryRmiPort=0 >> $PROPFILE
+echo transitclock.rmi.secondaryRmiPort=$SECONDARY_RMI_PORT >> $PROPFILE
