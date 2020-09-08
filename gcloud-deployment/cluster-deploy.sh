@@ -10,25 +10,34 @@ if [ "$PGPASSWORD" == "transitclock" ]; then
     exit 0
 fi
 
-# checkEnv("RMI_HOST");
-# checkEnv("DB_HOSTNAME");
-# checkEnv("PRIMARY_DB_HOSTNAME");
-# checkEnv("PRIMARY_AGENCY_ID");
+if [ -z "$RMI_HOST" ]; then
+    echo "env variable RMI_HOST needs to be set"
+    exit 0
+fi
 
-### add firewall rule for port 6789
+if [ -z "$DB_HOSTNAME" ]; then
+    echo "env variable DB_HOSTNAME needs to be set"
+    exit 0
+fi
 
-AGENCY_ID="halifax"
-GTFS_URL="http://gtfs.halifax.ca/static/google_transit.zip"
-VEHICLE_POSITIONS_URL="http://gtfs.halifax.ca/realtime/Vehicle/VehiclePositions.pb"
-PRESERVE_DB="1"
-RMI_HOSTNAME="34.94.24.132"
-DB_HOSTNAME="34.94.231.127"
-PRIMARY_AGENCY_HOST="34.94.231.127"
-PRIMARY_AGENCY_ID="halifax"
+if [ -z "$PRIMARY_DB_HOSTNAME" ]; then
+    echo "env variable PRIMARY_DB_HOSTNAME needs to be set"
+    exit 0
+fi
 
-gcloud compute instances create-with-container transitclock-core-$AGENCY_ID \
+if [ -z "$PRIMARY_AGENCY_ID" ]; then
+    echo "env variable PRIMARY_AGENCY_ID needs to be set"
+    exit 0
+fi
+
+CLUSTER_INSTANCES=`gcloud compute instances list | grep -v ^NAME | grep ^transitclock-cluster- | wc -l | awk '{print $1}'`
+echo CLUSTER_INSTANCES: $CLUSTER_INSTANCES
+CLUSTER_INDEX=`expr 1 + $CLUSTER_INSTANCES`
+echo CLUSTER_INDEX: $CLUSTER_INDEX
+
+gcloud compute instances create-with-container transitclock-cluster-$CLUSTER_INDEX \
   --container-stdin --container-tty \
-  --container-image gcr.io/transitclock-282522/core \
+  --container-image gcr.io/transitclock-282522/cluster \
   --boot-disk-size=10GB \
-  --tags rmi-registry \
-  --container-env PGPASSWORD=$PGPASSWORD,AGENCY_ID=$AGENCY_ID,GTFS_URL=$GTFS_URL,VEHICLE_POSITIONS_URL=$VEHICLE_POSITIONS_URL,PRESERVE_DB=$PRESERVE_DB,RMI_HOSTNAME=$RMI_HOSTNAME,DB_HOSTNAME=$DB_HOSTNAME,PRIMARY_AGENCY_HOST=$PRIMARY_AGENCY_HOST,PRIMARY_AGENCY_ID=$PRIMARY_AGENCY_ID
+  --tags transitclock-cluster \
+  --container-env PGPASSWORD=$PGPASSWORD,RMI_HOST=$RMI_HOST,DB_HOSTNAME=$DB_HOSTNAME,PRIMARY_DB_HOSTNAME=$PRIMARY_DB_HOSTNAME,PRIMARY_AGENCY_ID=$PRIMARY_AGENCY_ID

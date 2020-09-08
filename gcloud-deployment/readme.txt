@@ -46,6 +46,9 @@ gcloud compute firewall-rules create allow-secondary-rmi --allow tcp:1098 --targ
 gcloud compute firewall-rules create allow-secondary-http --allow tcp:8080 --target-tags transitclock-server
 gcloud compute firewall-rules create allow-postgres --allow tcp:5432 --target-tags postgres
 
+gcloud compute firewall-rules create allow-rmi-range --allow tcp:1089-1099 --target-tags transitclock-cluster
+gcloud compute firewall-rules create allow-cluster-admin --allow tcp:6789 --target-tags transitclock-cluster
+
 gcloud compute firewall-rules list
 
 

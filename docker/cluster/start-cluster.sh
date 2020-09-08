@@ -5,3 +5,4 @@ do
     echo '------------------- starting core admin tool -------------------'
     java -jar /usr/local/transitclock/lib/core-admin.jar -port 6789
 done
+
