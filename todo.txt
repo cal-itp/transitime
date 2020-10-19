@@ -1,0 +1,28 @@
+- web app:
+  + android:
+    . why doesn't stop button work?
+    . fix wake lock error
+  + events:
+    . which events are sent if (if any) for app going to background, or user pressing sleep button?
+    . can wake lock handle these situations and remain functional?
+- core admin:
+  + status-and-quit command
+  + logging:
+    . Debug.log() appends to /usr/local/transitclock/logs/core-admin.txt
+    . set uncaught exception handler that writes stack traces to log
+- lat long server:
+  + client signs hello message
+  + server verifies message and marks ip address as verified
+  + for subsequent messages, server checks for verified IP, asks for verification if not found
+- idea to not have to re-deploy lat long server every time a new operator is added
+  + pre-generate 50 ecdsa pairs
+  + add 50 public keys to static/pu-keys.txt with IDs like agency-1, agency-2, etc.
+  + under gs://transitclock-resources/gtfs-aux/agency-<n>, add settings.json with agency id
+  + change web app to read agency id from settings.json
+- transit clock
+  + can server notice new cores without restarting?
+  + can core notice changed GTFS zip and reparse without restarting? Alternatively, can a daemon monitor GTFS modicfication times, and if changed re-parse to a seprate DB? Once DB is set up, stop core, clobber old DB with new DB and restart core
+- scale testing:
+  + create a tool that takes as input a static GTFS URL, and converts stop times to match current time, optionally with definable offset to when testing will start
+  + extends AVLSim instances to point to a particular trip, and "walk" along the associated shape to emulate moving vehicles
+  + once we have both of the items above, we have the ability to generate arbitrary scale for concurrent trips, multiple agencies, or both. We can then do serious scale testing both for just the GTFS-rt portion of the system, and end-to-end including the transit clock

@@ -84,6 +84,7 @@ GET https://logging.googleapis.com/v2/{parent=folders/*}/logs
 gcloud bucket access:
 gsutil ls -l -r gs://transitclock-resources
 gsutil cp transitclock/target/Core.jar gs://transitclock-resources/core/Core.jar
+external URL: https://storage.googleapis.com/transitclock-resources/
 
 http://34.94.152.206:8080/web
 http://34.94.157.136:8080/web

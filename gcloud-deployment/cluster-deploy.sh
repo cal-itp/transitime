@@ -10,8 +10,8 @@ if [ "$PGPASSWORD" == "transitclock" ]; then
     exit 0
 fi
 
-if [ -z "$RMI_HOST" ]; then
-    echo "env variable RMI_HOST needs to be set"
+if [ -z "$RMI_HOSTNAME" ]; then
+    echo "env variable RMI_HOSTNAME needs to be set"
     exit 0
 fi
 
@@ -40,4 +40,4 @@ gcloud compute instances create-with-container transitclock-cluster-$CLUSTER_IND
   --container-image gcr.io/transitclock-282522/cluster \
   --boot-disk-size=10GB \
   --tags transitclock-cluster \
-  --container-env PGPASSWORD=$PGPASSWORD,RMI_HOST=$RMI_HOST,DB_HOSTNAME=$DB_HOSTNAME,PRIMARY_DB_HOSTNAME=$PRIMARY_DB_HOSTNAME,PRIMARY_AGENCY_ID=$PRIMARY_AGENCY_ID
+  --container-env PGPASSWORD=$PGPASSWORD,RMI_HOST=$RMI_HOSTNAME,DB_HOSTNAME=$DB_HOSTNAME,PRIMARY_DB_HOSTNAME=$PRIMARY_DB_HOSTNAME,PRIMARY_AGENCY_ID=$PRIMARY_AGENCY_ID
